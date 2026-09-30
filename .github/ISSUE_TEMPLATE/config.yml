@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security report
+    url: https://github.com/tunsuy/agthelm-templates/security/advisories/new
+    about: 请勿公开披露安全问题，使用 Private vulnerability reporting
+  - name: Product / production install
+    url: https://github.com/tunsuy/agthelm
+    about: 私有化装机、签名包与产品问题请走 agthelm 产品渠道（本仓仅模板源）
