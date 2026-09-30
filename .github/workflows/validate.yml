@@ -1,0 +1,23 @@
+name: validate
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  schema:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install deps
+        run: pip install -r tools/requirements.txt
+      - name: Validate all examples
+        run: |
+          set -euo pipefail
+          for d in examples/*/; do
+            python3 tools/validate.py "$d"
+          done

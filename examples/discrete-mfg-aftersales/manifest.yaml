@@ -1,0 +1,53 @@
+apiVersion: templates.agthelm.io/v1alpha1
+kind: ScenarioTemplate
+metadata:
+  id: discrete-mfg-aftersales
+  name: 离散制造 · 售后问答
+  version: 0.1.0
+  description: >
+    示意基线：钉钉群入口 + 手册/FAQ 检索 + 引用拒答 + 人在环写工单备注。
+    非真实客户数据；生产须经官方签名包安装。
+  industry: discrete-manufacturing
+  scenario: aftersales-qa
+spec:
+  entry:
+    channel: dingtalk.bot
+    handler: aftersales
+  sources:
+    - type: smb
+      role: manuals
+      notes: 售后手册 / 报警码专册
+    - type: dingtalk.wiki
+      role: faq
+      notes: 一线 FAQ
+  acl_scope:
+    mode: source_sync
+    notes: 部门树逐客户重绑；规则模式可移植
+  prompt:
+    system: |
+      你是离散制造售后助手。只依据已授权知识源作答；答不出明确拒答；
+      答案须带可核验引用。不要编造备件号或复位步骤。
+    refuse_rules:
+      - 越权文档范围外的内容拒答并提示申请权限
+      - 涉及高压复位等安全红线时提示升级二线
+  tools:
+    - retrieve
+    - cite
+    - refuse
+    - hitl_write
+  eval_set:
+    skeleton_count: 48
+    notes: 题目类型结构可随模板走；答题实例留在客户域
+  sla:
+    sync_hours_max: 1
+    cite_precision_min: 0.95
+  compatibility:
+    - system: dingtalk
+      versions: "6.5-7.x"
+    - system: smb
+      versions: "*"
+    - system: yonyou-u8
+      versions: "15-16"
+  hitl:
+    write_actions: im_confirm
+    notes: 不直连 ERP 提交；工程师确认后再写工单备注或复制
