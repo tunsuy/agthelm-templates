@@ -1,7 +1,9 @@
 # Manifest 字段说明
 
 Schema 文件：[`schema/manifest.schema.json`](../schema/manifest.schema.json)  
-`apiVersion`: `templates.agthelm.io/v1alpha1` · `kind`: `ScenarioTemplate`
+`apiVersion`: `templates.agthelm.io/v1alpha1` \| `templates.agthelm.io/v1beta1` · `kind`: `ScenarioTemplate`
+
+`v1beta1` 为纯增量（v1alpha1 包仍可校验通过）；新增字段见下文标 **v1beta1** 的段落。
 
 ## metadata
 
@@ -28,6 +30,7 @@ Schema 文件：[`schema/manifest.schema.json`](../schema/manifest.schema.json)
 - `type`: `feishu.wiki` \| `dingtalk.wiki` \| `smb` \| `confluence` \| `local`
 - `role`: 场景内角色，如 `manuals` / `faq`
 - `notes`: 可选说明
+- `label`:（**v1beta1**）集合建议可读名（如「产品手册」）——安装方按角色在本库找同名或同类集合
 
 ## spec.acl_scope
 
@@ -47,6 +50,24 @@ Schema 文件：[`schema/manifest.schema.json`](../schema/manifest.schema.json)
 
 - `skeleton_count`: 评测骨架题量（只描述结构规模）
 - `notes`: 明确「实例留在客户域」
+- `items`:（**v1beta1**）结构化考题行，每行 `question`（必填）+ `expected`（可选）；
+  `expected` 空 = 该题期望拒答。有 `items` 时 `skeleton_count` 仅作兼容统计
+
+## spec.glossary（可选，**v1beta1**）
+
+场景术语表结构化行，渲染进系统提示的「场景术语表」段：
+
+- `term` / `definition` 均必填非空
+
+## spec.actions（可选，**v1beta1**）
+
+动作段白名单（条目级自描述：标签与写分级随包走）：
+
+- `system` / `action`: 键，`^[a-z][a-z0-9_-]{0,63}$`
+- `systemLabel` / `actionLabel`: 展示名（必填非空）——其他客户拿到模板即可读
+- `write`: `true` = 改数据，安装后须走写操作确认闸
+
+安装方在自己的操作目录里对键；对不上的条目诚实降级（展示但不可勾选），不静默吞。
 
 ## spec.sla
 
