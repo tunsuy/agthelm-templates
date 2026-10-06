@@ -12,7 +12,10 @@
   ],
   "properties": {
     "apiVersion": {
-      "const": "templates.agthelm.io/v1alpha1"
+      "enum": [
+        "templates.agthelm.io/v1alpha1",
+        "templates.agthelm.io/v1beta1"
+      ]
     },
     "kind": {
       "const": "ScenarioTemplate"
@@ -96,6 +99,10 @@
               },
               "notes": {
                 "type": "string"
+              },
+              "label": {
+                "type": "string",
+                "description": "Suggested human-readable collection name (e.g. 产品手册); the installer maps this role to a same-named or similar collection in its own library"
               }
             }
           }
@@ -149,6 +156,24 @@
             "notes": {
               "type": "string",
               "description": "Instances stay at customer; only skeleton ships in template"
+            },
+            "items": {
+              "type": "array",
+              "description": "Eval question rows; an empty or missing expected means the model is expected to refuse. When items is present, skeleton_count is kept for compat stats only",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["question"],
+                "properties": {
+                  "question": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "expected": {
+                    "type": "string"
+                  }
+                }
+              }
             }
           }
         },
@@ -196,6 +221,56 @@
             },
             "notes": {
               "type": "string"
+            }
+          }
+        },
+        "glossary": {
+          "type": "array",
+          "description": "Structured glossary rows (term + definition) rendered into the system prompt's scenario glossary section",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["term", "definition"],
+            "properties": {
+              "term": {
+                "type": "string",
+                "minLength": 1
+              },
+              "definition": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        "actions": {
+          "type": "array",
+          "description": "Action whitelist entries, self-describing: labels and write grading travel with the package. An installer whose action catalog lacks a key degrades honestly (entry shown but not checkable)",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["system", "systemLabel", "action", "actionLabel", "write"],
+            "properties": {
+              "system": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+              },
+              "systemLabel": {
+                "type": "string",
+                "minLength": 1
+              },
+              "action": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+              },
+              "actionLabel": {
+                "type": "string",
+                "minLength": 1
+              },
+              "write": {
+                "type": "boolean",
+                "description": "true = mutates data; after install it must go through the write-action confirmation gate"
+              }
             }
           }
         }

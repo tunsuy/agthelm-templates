@@ -10,6 +10,12 @@ and this project attempts to follow [Semantic Versioning](https://semver.org/) f
 ### Added
 
 - OSS documentation set: overview, manifest guide, governance, security, support, CoC, issue/PR templates
+- Schema `templates.agthelm.io/v1beta1` (additive; v1alpha1 manifests still validate):
+  `spec.glossary` (structured term/definition rows), `spec.eval_set.items`
+  (question/expected rows, empty expected = expected refusal), `spec.actions`
+  (self-describing action whitelist with labels and write grading), `spec.sources[].label`
+  (suggested human-readable collection name)
+- Example `examples/crm-customer-assistant` (v1beta1 fixture exercising all four new fields)
 
 ## [0.1.0] - 2026-09-30
 
